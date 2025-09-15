@@ -445,11 +445,44 @@ class SilkThreadGame {
             this.imageLoaded = true;
         };
         
-        // Mouse tracking
+        // Mouse and touch tracking
         this.mouseX = this.player.x;
+        this.isTouching = false;
+        
+        // Mouse events for desktop
         this.canvas.addEventListener('mousemove', (e) => {
+            if (!this.isTouching) {
+                const rect = this.canvas.getBoundingClientRect();
+                this.mouseX = e.clientX - rect.left - this.player.width / 2;
+            }
+        });
+        
+        // Touch events for mobile
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.isTouching = true;
             const rect = this.canvas.getBoundingClientRect();
-            this.mouseX = e.clientX - rect.left - this.player.width / 2;
+            const touch = e.touches[0];
+            this.mouseX = touch.clientX - rect.left - this.player.width / 2;
+        });
+        
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (this.isTouching) {
+                const rect = this.canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                this.mouseX = touch.clientX - rect.left - this.player.width / 2;
+            }
+        });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.isTouching = false;
+        });
+        
+        this.canvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            this.isTouching = false;
         });
         
         // Game controls
